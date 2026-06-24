@@ -1,0 +1,51 @@
+{
+  "months": [
+    {
+      "month": "April 2025",
+      "business": "Mie Pangsit Louis Hilton",
+      "saldoAwal": 10000000,
+      "weeks": [
+        {
+          "week": 1,
+          "penjualan": 1976000,
+          "jasaOwner": 198000,
+          "bahanBaku": 3204000,
+          "gajiKaryawan": 528000,
+          "sewaListrik": 1000000,
+          "marketing": 500000,
+          "operasional": 500000
+        },
+        {
+          "week": 2,
+          "penjualan": 1750000,
+          "jasaOwner": 78000,
+          "bahanBaku": 383000,
+          "gajiKaryawan": 642000,
+          "sewaListrik": 0,
+          "marketing": 0,
+          "operasional": 0
+        },
+        {
+          "week": 3,
+          "penjualan": 1325000,
+          "jasaOwner": 0,
+          "bahanBaku": 383000,
+          "gajiKaryawan": 546000,
+          "sewaListrik": 0,
+          "marketing": 0,
+          "operasional": 0
+        },
+        {
+          "week": 4,
+          "penjualan": 1051000,
+          "jasaOwner": 0,
+          "bahanBaku": 383000,
+          "gajiKaryawan": 387000,
+          "sewaListrik": 0,
+          "marketing": 0,
+          "operasional": 0
+        }
+      ]
+    }
+  ]
+}
