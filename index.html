@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>📊 Dashboard Keuangan · Mie Pangsit Louis Hilton</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f0f4fa;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ===== DASHBOARD WRAPPER ===== */
+        .dashboard-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 20, 40, 0.08);
+            padding: 16px 12px;
+            transition: all 0.3s ease;
+        }
+
+        /* ===== RESPONSIVE PADDING ===== */
+        @media (min-width: 480px) {
+            .dashboard-wrapper {
+                padding: 20px 16px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            .dashboard-wrapper {
+                padding: 28px 24px;
+                border-radius: 24px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            body {
+                padding: 30px;
+            }
+            .dashboard-wrapper {
+                padding: 36px 40px;
+                border-radius: 32px;
+            }
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid #eef2f6;
+        }
+
+        .header-left {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .header-left h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e2b3c, #2c3e50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+            line-height: 1.3;
+        }
+
+        @media (min-width: 480px) {
+            .header-left h1 {
+                font-size: 1.4rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .header-left h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .header-left h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .header-sub {
+            color: #4a5c6e;
+            background: #eef3f9;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-weight: 500;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+
+        @media (min-width: 480px) {
+            .header-sub {
+                font-size: 0.8rem;
+                padding: 6px 14px;
+            }
+        }
+
+        .header-sub .badge-month {
+            background: #1e2b3c;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-size: 0.65rem;
+        }
+
+        @media (min-width: 480px) {
+            .header-sub .badge-month {
+                font-size: 0.7rem;
+                padding: 2px 12px;
+            }
+        }
+
+        /* ===== HEADER CONTROLS ===== */
+        .header-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        @media (min-width: 480px) {
+            .header-controls {
+                width: auto;
+                flex-wrap: nowrap;
+            }
+        }
+
+        @media (max-width: 479px) {
+            .header-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        .month-selector {
+            padding: 8px 12px;
+            border-radius: 40px;
+            border: 1px solid #d0d9e4;
+            background: white;
+            font-weight: 500;
+            font-size: 0.8rem;
+            color: #1f2a3a;
+            cursor: pointer;
+            min-width: 120px;
+            flex: 1;
+        }
+
+        @media (min-width: 480px) {
+            .month-selector {
+                font-size: 0.85rem;
+                padding: 8px 16px;
+                min-width: 140px;
+                flex: none;
+            }
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            flex: 1;
+        }
+
+        @media (max-width: 479px) {
+            .btn-group {
+                flex: 1;
+            }
+        }
+
+        .btn {
+            background: white;
+            border: 1px solid #d0d9e4;
+            padding: 8px 12px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.7rem;
+            color: #1f2a3a;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+            flex: 1;
+            text-align: center;
+        }
+
+        @media (min-width: 480px) {
+            .btn {
+                font-size: 0.8rem;
+                padding: 8px 16px;
+                flex: none;
+            }
+        }
+
+        .btn-primary {
+            background: #1e2b3c;
+            border: 1px solid #1e2b3c;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2c3e50;
+        }
+
+        .btn:hover {
+            background: #f0f4fa;
+            border-color: #b0c0d0;
+        }
+
+        .btn-primary:hover {
+            background: #2c3e50;
+            border-color: #2c3e50;
+            color: white;
+        }
+
+        /* ===== SALDO CARD ===== */
+        .saldo-card {
+            background: linear-gradient(135deg, #f2f7fe, #e8f0fa);
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 480px) {
+            .saldo-card {
+                padding: 16px 20px;
+                gap: 16px;
+            }
+        }
+
+        @media (min-width: 600px) {
+            .saldo-card {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .saldo-card {
+                padding: 20px 28px;
+                border-radius: 20px;
+                gap: 24px;
+            }
+        }
+
+        .saldo-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .saldo-label {
+            font-size: 0.6rem;
+            color: #5a7188;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        @media (min-width: 480px) {
+            .saldo-label {
+                font-size: 0.65rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .saldo-label {
+                font-size: 0.7rem;
+            }
+        }
+
+        .saldo-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #0f1e2e;
+            word-break: break-word;
+        }
+
+        @media (min-width: 480px) {
+            .saldo-value {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .saldo-value {
+                font-size: 1.4rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .saldo-value {
+                font-size: 1.6rem;
+            }
+        }
+
+        .saldo-value.positive {
+            color: #0f7b3a;
+        }
+        .saldo-value.negative {
+            color: #b13e4b;
+        }
+
+        /* ===== GRID CHARTS ===== */
+        .grid-charts {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 600px) {
+            .grid-charts {
+                gap: 20px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .grid-charts {
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+            }
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #edf2f8;
+            padding: 14px 12px;
+        }
+
+        @media (min-width: 480px) {
+            .card {
+                padding: 16px;
+                border-radius: 20px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .card {
+                padding: 20px;
+            }
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #2f4053;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #e3eaf2;
+        }
+
+        @media (min-width: 480px) {
+            .card-title {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .card-title {
+                font-size: 0.95rem;
+                margin-bottom: 14px;
+                padding-bottom: 10px;
+            }
+        }
+
+        .chart-container {
+            height: 160px;
+            position: relative;
+        }
+
+        @media (min-width: 480px) {
+            .chart-container {
+                height: 180px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 200px;
+            }
+        }
+
+        .chart-legend {
+            margin-top: 8px;
+            font-size: 0.6rem;
+            color: #3d5a78;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        @media (min-width: 480px) {
+            .chart-legend {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* ===== EXCEL TABLE ===== */
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .table-header .card-title {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .table-badge {
+            background: #ecf3fa;
+            border-radius: 40px;
+            padding: 4px 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #1f3a57;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 480px) {
+            .table-badge {
+                font-size: 0.7rem;
+                padding: 4px 14px;
+            }
+        }
+
+        .excel-table {
+            overflow-x: auto;
+            margin-top: 4px;
+            border-radius: 12px;
+            border: 1px solid #dce4ed;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (min-width: 768px) {
+            .excel-table {
+                border-radius: 16px;
+            }
+        }
+
+        .excel-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.6rem;
+            min-width: 500px;
+        }
+
+        @media (min-width: 480px) {
+            .excel-table table {
+                font-size: 0.7rem;
+                min-width: 550px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .excel-table table {
+                font-size: 0.8rem;
+                min-width: unset;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .excel-table table {
+                font-size: 0.85rem;
+            }
+        }
+
+        .excel-table th {
+            background: #f0f5fd;
+            padding: 8px 4px;
+            border-right: 1px solid #dce4ed;
+            border-bottom: 2px solid #dce4ed;
+            text-align: center;
+            font-weight: 600;
+            color: #1f3a57;
+            font-size: 0.55rem;
+        }
+
+        @media (min-width: 480px) {
+            .excel-table th {
+                font-size: 0.65rem;
+                padding: 10px 6px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .excel-table th {
+                font-size: 0.75rem;
+                padding: 12px 8px;
+            }
+        }
+
+        .excel-table td {
+            padding: 6px 4px;
+            border-right: 1px solid #e6edf6;
+            border-bottom: 1px solid #e6edf6;
+            text-align: center;
+            font-size: 0.55rem;
+        }
+
+        @media (min-width: 480px) {
+            .excel-table td {
+                font-size: 0.65rem;
+                padding: 8px 6px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .excel-table td {
+                font-size: 0.75rem;
+                padding: 10px 8px;
+            }
+        }
+
+        .excel-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .excel-table .label-cell {
+            text-align: left;
+            font-weight: 500;
+            color: #1f2e3f;
+            padding-left: 6px;
+            font-size: 0.55rem;
+        }
+
+        @media (min-width: 480px) {
+            .excel-table .label-cell {
+                font-size: 0.65rem;
+                padding-left: 8px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .excel-table .label-cell {
+                font-size: 0.75rem;
+                padding-left: 12px;
+            }
+        }
+
+        .excel-table .total-row td {
+            font-weight: 700;
+            background: #f8fbff;
+            border-top: 2px solid #d0dcec;
+        }
+
+        /* ===== STATS MINI ===== */
+        .stats-mini {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        @media (min-width: 480px) {
+            .stats-mini {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .stats-mini {
+                gap: 16px;
+                margin-top: 20px;
+            }
+        }
+
+        .stat-item {
+            background: #f8faff;
+            border-radius: 12px;
+            padding: 10px 12px;
+            border: 1px solid #eaf0f7;
+        }
+
+        @media (min-width: 480px) {
+            .stat-item {
+                padding: 12px 14px;
+                border-radius: 16px;
+            }
+        }
+
+        .stat-label {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            color: #5e748b;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+        }
+
+        @media (min-width: 480px) {
+            .stat-label {
+                font-size: 0.6rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .stat-label {
+                font-size: 0.7rem;
+            }
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #142433;
+            margin-top: 2px;
+            word-break: break-word;
+        }
+
+        @media (min-width: 480px) {
+            .stat-value {
+                font-size: 1rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .stat-value {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .stat-value {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            font-size: 0.6rem;
+            color: #6a7f96;
+            margin-top: 20px;
+            padding-top: 12px;
+            border-top: 1px solid #e4ecf5;
+            text-align: center;
+        }
+
+        @media (min-width: 480px) {
+            .footer {
+                font-size: 0.65rem;
+                margin-top: 24px;
+                padding-top: 14px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .footer {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* ===== LOADING ===== */
+        .loading {
+            text-align: center;
+            padding: 30px 16px;
+            font-size: 0.95rem;
+            color: #4a5c6e;
+        }
+
+        @media (min-width: 480px) {
+            .loading {
+                padding: 40px 20px;
+                font-size: 1.1rem;
+            }
+        }
+
+        .loading small {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.75rem;
+            color: #8a9db0;
+        }
+
+        @media (min-width: 480px) {
+            .loading small {
+                font-size: 0.85rem;
+                margin-top: 8px;
+            }
+        }
+
+        /* ===== HIDE CONTENT INITIALLY ===== */
+        #dashboardContent {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper" id="dashboardRoot">
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+            <div class="header-left">
+                <h1 id="businessName">🍜 Mie Pangsit Louis Hilton</h1>
+                <div class="header-sub">
+                    <span id="monthDisplay">April 2025</span>
+                    <span class="badge-month">Laporan Keuangan</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <select class="month-selector" id="monthSelector">
+                    <option value="">Memuat data...</option>
+                </select>
+                <div class="btn-group">
+                    <button class="btn" id="saveImageBtn">🖼️ Gambar</button>
+                    <button class="btn btn-primary" id="savePdfBtn">📄 PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== LOADING ===== -->
+        <div id="loadingMessage" class="loading">
+            ⏳ Memuat data keuangan...
+            <small>Pastikan file data.json tersedia</small>
+        </div>
+
+        <!-- ===== DASHBOARD CONTENT ===== -->
+        <div id="dashboardContent">
+            <!-- Saldo Card -->
+            <div class="saldo-card" id="saldoCard">
+                <div class="saldo-item">
+                    <span class="saldo-label">Saldo Awal</span>
+                    <span class="saldo-value" id="saldoAwal">Rp0</span>
+                </div>
+                <div class="saldo-item">
+                    <span class="saldo-label">Total Pemasukan</span>
+                    <span class="saldo-value positive" id="totalPemasukan">Rp0</span>
+                </div>
+                <div class="saldo-item">
+                    <span class="saldo-label">Total Pengeluaran</span>
+                    <span class="saldo-value negative" id="totalPengeluaran">Rp0</span>
+                </div>
+                <div class="saldo-item">
+                    <span class="saldo-label">Saldo Akhir</span>
+                    <span class="saldo-value" id="saldoAkhir">Rp0</span>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid-charts">
+                <div class="card">
+                    <div class="card-title">📈 Penjualan & Jasa Owner</div>
+                    <div class="chart-container"><canvas id="chartPenjualan"></canvas></div>
+                    <div class="chart-legend">
+                        <span>🔹 Penjualan</span>
+                        <span>🔸 Jasa Owner</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">🧾 Biaya Bahan Baku & Gaji</div>
+                    <div class="chart-container"><canvas id="chartBiaya"></canvas></div>
+                    <div class="chart-legend">
+                        <span>🧺 Bahan Baku</span>
+                        <span>👨‍🍳 Gaji Karyawan</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Excel Table -->
+            <div style="margin-top: 4px;">
+                <div class="table-header">
+                    <span class="card-title" style="border: none; padding: 0; margin: 0;">📋 Neraca Perdagangan</span>
+                    <span class="table-badge" id="tableMonthLabel">April 2025</span>
+                </div>
+                <div class="excel-table" id="excelTableContainer">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Keterangan</th>
+                                <th>Minggu 1</th>
+                                <th>Minggu 2</th>
+                                <th>Minggu 3</th>
+                                <th>Minggu 4</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="excelBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Stats Mini -->
+            <div class="stats-mini" id="statsMini">
+                <div class="stat-item">
+                    <div class="stat-label">🟢 Total Pemasukan</div>
+                    <div class="stat-value" id="statPemasukan">Rp0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">🔴 Total Pengeluaran</div>
+                    <div class="stat-value" id="statPengeluaran">Rp0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">📊 Margin Kotor</div>
+                    <div class="stat-value" id="statMargin">Rp0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">📈 Rata-rata Penjualan</div>
+                    <div class="stat-value" id="statAvgPenjualan">Rp0</div>
+                </div>
+            </div>
+
+            <div class="footer">
+                ⚡ Data berdasarkan laporan keuangan · <span id="footerMonth">April 2025</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allData = null;
+        let currentMonthIndex = 0;
+        let chartPenjualan = null;
+        let chartBiaya = null;
+
+        // ===== LOAD DATA =====
+        async function loadData() {
+            try {
+                const response = await fetch('data.json');
+                if (!response.ok) throw new Error('Gagal memuat data.json (HTTP ' + response.status + ')');
+                allData = await response.json();
+
+                if (!allData.months || allData.months.length === 0) {
+                    throw new Error('Data kosong: tidak ada bulan ditemukan');
+                }
+
+                populateMonthSelector();
+                currentMonthIndex = 0;
+                renderMonth(0);
+
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('dashboardContent').style.display = 'block';
+            } catch (error) {
+                document.getElementById('loadingMessage').innerHTML = `
+                    ❌ Gagal memuat data<br>
+                    <small>${error.message}</small><br>
+                    <small style="display:block; margin-top:8px; color:#8a9db0;">
+                        Pastikan file <strong>data.json</strong> ada di folder yang sama dengan index.html
+                    </small>
+                `;
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // ===== POPULATE MONTH SELECTOR =====
+        function populateMonthSelector() {
+            const selector = document.getElementById('monthSelector');
+            selector.innerHTML = '';
+            allData.months.forEach((item, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = item.month;
+                selector.appendChild(option);
+            });
+            selector.addEventListener('change', function() {
+                const idx = parseInt(this.value);
+                if (!isNaN(idx)) {
+                    currentMonthIndex = idx;
+                    renderMonth(idx);
+                }
+            });
+        }
+
+        // ===== RENDER MONTH =====
+        function renderMonth(index) {
+            const data = allData.months[index];
+            if (!data) return;
+
+            // Update header
+            document.getElementById('monthDisplay').textContent = data.month;
+            document.getElementById('businessName').textContent = `🍜 ${data.business}`;
+            document.getElementById('tableMonthLabel').textContent = data.month;
+            document.getElementById('footerMonth').textContent = data.month;
+
+            // Calculate totals
+            const weeks = data.weeks;
+            const totalPenjualan = weeks.reduce((a, w) => a + w.penjualan, 0);
+            const totalJasa = weeks.reduce((a, w) => a + w.jasaOwner, 0);
+            const totalBahan = weeks.reduce((a, w) => a + w.bahanBaku, 0);
+            const totalGaji = weeks.reduce((a, w) => a + w.gajiKaryawan, 0);
+            const totalSewa = weeks.reduce((a, w) => a + w.sewaListrik, 0);
+            const totalMarketing = weeks.reduce((a, w) => a + w.marketing, 0);
+            const totalOperasional = weeks.reduce((a, w) => a + w.operasional, 0);
+            const totalPemasukan = totalPenjualan + totalJasa;
+            const totalPengeluaran = totalBahan + totalGaji + totalSewa + totalMarketing + totalOperasional;
+            const saldoAkhir = data.saldoAwal + totalPemasukan - totalPengeluaran;
+            const avgPenjualan = totalPenjualan / weeks.length;
+
+            // Update Saldo Card
+            document.getElementById('saldoAwal').textContent = 'Rp' + data.saldoAwal.toLocaleString('id-ID');
+            document.getElementById('totalPemasukan').textContent = 'Rp' + totalPemasukan.toLocaleString('id-ID');
+            document.getElementById('totalPengeluaran').textContent = 'Rp' + totalPengeluaran.toLocaleString('id-ID');
+            const saldoAkhirEl = document.getElementById('saldoAkhir');
+            saldoAkhirEl.textContent = 'Rp' + saldoAkhir.toLocaleString('id-ID');
+            saldoAkhirEl.className = 'saldo-value ' + (saldoAkhir >= 0 ? 'positive' : 'negative');
+
+            // Update Stats Mini
+            document.getElementById('statPemasukan').textContent = 'Rp' + totalPemasukan.toLocaleString('id-ID');
+            document.getElementById('statPengeluaran').textContent = 'Rp' + totalPengeluaran.toLocaleString('id-ID');
+            const margin = totalPemasukan - totalPengeluaran;
+            const marginEl = document.getElementById('statMargin');
+            marginEl.textContent = 'Rp' + margin.toLocaleString('id-ID');
+            marginEl.style.color = margin >= 0 ? '#0f7b3a' : '#b13e4b';
+            document.getElementById('statAvgPenjualan').textContent = 'Rp' + avgPenjualan.toLocaleString('id-ID');
+
+            // Update Excel Table
+            renderExcelTable(data);
+
+            // Update Charts
+            updateCharts(data);
+        }
+
+        // ===== RENDER EXCEL TABLE =====
+        function renderExcelTable(data) {
+            const weeks = data.weeks;
+            const totalPenjualan = weeks.reduce((a, w) => a + w.penjualan, 0);
+            const totalJasa = weeks.reduce((a, w) => a + w.jasaOwner, 0);
+            const totalBahan = weeks.reduce((a, w) => a + w.bahanBaku, 0);
+            const totalGaji = weeks.reduce((a, w) => a + w.gajiKaryawan, 0);
+            const totalSewa = weeks.reduce((a, w) => a + w.sewaListrik, 0);
+            const totalMarketing = weeks.reduce((a, w) => a + w.marketing, 0);
+            const totalOperasional = weeks.reduce((a, w) => a + w.operasional, 0);
+            const totalPemasukan = totalPenjualan + totalJasa;
+            const totalPengeluaran = totalBahan + totalGaji + totalSewa + totalMarketing + totalOperasional;
+            const saldoAkhir = data.saldoAwal + totalPemasukan - totalPengeluaran;
+
+            const rows = [
+                { label: 'Pemasukan Penjualan', values: weeks.map(w => w.penjualan), total: totalPenjualan },
+                { label: 'Jasa Owner Dagang', values: weeks.map(w => w.jasaOwner), total: totalJasa },
+                { label: 'Total Pemasukan', values: weeks.map((w, i) => weeks[i].penjualan + weeks[i].jasaOwner), total: totalPemasukan,
+                    isTotal: true },
+                { label: 'Bahan Baku', values: weeks.map(w => w.bahanBaku), total: totalBahan },
+                { label: 'Gaji Karyawan', values: weeks.map(w => w.gajiKaryawan), total: totalGaji },
+                { label: 'Sewa + Listrik', values: weeks.map(w => w.sewaListrik), total: totalSewa },
+                { label: 'Marketing', values: weeks.map(w => w.marketing), total: totalMarketing },
+                { label: 'Operasional', values: weeks.map(w => w.operasional), total: totalOperasional },
+                { label: 'Total Pengeluaran', values: weeks.map((w, i) => weeks[i].bahanBaku + weeks[i].gajiKaryawan + weeks[
+                        i].sewaListrik + weeks[i].marketing + weeks[i].operasional), total: totalPengeluaran,
+                    isTotal: true },
+                { label: 'Saldo Akhir', values: weeks.map((w, i) => {
+                        let saldo = data.saldoAwal;
+                        for (let j = 0; j <= i; j++) {
+                            saldo += (weeks[j].penjualan + weeks[j].jasaOwner) - (weeks[j].bahanBaku + weeks[j]
+                                .gajiKaryawan + weeks[j].sewaListrik + weeks[j].marketing + weeks[j]
+                                .operasional);
+                        }
+                        return saldo;
+                    }), total: saldoAkhir, isTotal: true }
+            ];
+
+            const tbody = document.getElementById('excelBody');
+            tbody.innerHTML = '';
+            rows.forEach((r) => {
+                const tr = document.createElement('tr');
+                if (r.isTotal) tr.className = 'total-row';
+
+                const labelCell = document.createElement('td');
+                labelCell.textContent = r.label;
+                labelCell.className = 'label-cell';
+                tr.appendChild(labelCell);
+
+                r.values.forEach(v => {
+                    const td = document.createElement('td');
+                    td.textContent = 'Rp' + v.toLocaleString('id-ID');
+                    tr.appendChild(td);
+                });
+
+                const totalCell = document.createElement('td');
+                totalCell.textContent = 'Rp' + r.total.toLocaleString('id-ID');
+                if (r.isTotal) totalCell.style.fontWeight = '700';
+                tr.appendChild(totalCell);
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ===== UPDATE CHARTS =====
+        function updateCharts(data) {
+            const weeks = data.weeks;
+            const labels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
+            const penjualan = weeks.map(w => w.penjualan);
+            const jasa = weeks.map(w => w.jasaOwner);
+            const bahan = weeks.map(w => w.bahanBaku);
+            const gaji = weeks.map(w => w.gajiKaryawan);
+
+            // Chart 1: Penjualan & Jasa
+            if (chartPenjualan) chartPenjualan.destroy();
+            chartPenjualan = new Chart(document.getElementById('chartPenjualan'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Penjualan', data: penjualan, backgroundColor: '#2f5a8c', borderRadius: 6 },
+                        { label: 'Jasa Owner', data: jasa, backgroundColor: '#e6b85e', borderRadius: 6 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { 
+                                callback: v => 'Rp' + v.toLocaleString(), 
+                                font: { size: 8 } 
+                            }
+                        },
+                        x: { 
+                            ticks: { font: { size: 8 } } 
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Bahan Baku & Gaji
+            if (chartBiaya) chartBiaya.destroy();
+            chartBiaya = new Chart(document.getElementById('chartBiaya'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Bahan Baku', data: bahan, backgroundColor: '#3c8d7a', borderRadius: 6 },
+                        { label: 'Gaji Karyawan', data: gaji, backgroundColor: '#c06d6d', borderRadius: 6 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { 
+                                callback: v => 'Rp' + v.toLocaleString(), 
+                                font: { size: 8 } 
+                            }
+                        },
+                        x: { 
+                            ticks: { font: { size: 8 } } 
+                        }
+                    }
+                }
+            });
+        }
+
+        // ===== SAVE FUNCTIONS =====
+        async function captureDashboard() {
+            const dashboard = document.getElementById('dashboardRoot');
+            try {
+                const canvas = await html2canvas(dashboard, {
+                    scale: 1.8,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    allowTaint: false,
+                    useCORS: true
+                });
+                return canvas;
+            } catch (e) {
+                alert('Gagal menyimpan: ' + e.message);
+                throw e;
+            }
+        }
+
+        document.getElementById('saveImageBtn').addEventListener('click', async () => {
+            if (!allData) return alert('Data belum dimuat');
+            const canvas = await captureDashboard();
+            const link = document.createElement('a');
+            link.download = `Laporan_${allData.months[currentMonthIndex].month.replace(/\s/g, '_')}.png`;
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+        });
+
+        document.getElementById('savePdfBtn').addEventListener('click', async () => {
+            if (!allData) return alert('Data belum dimuat');
+            const canvas = await captureDashboard();
+            const link = document.createElement('a');
+            link.download = `Laporan_${allData.months[currentMonthIndex].month.replace(/\s/g, '_')}.png`;
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+            alert('📄 PDF tersimpan sebagai gambar berkualitas tinggi.\nUntuk PDF asli, gunakan fitur "Cetak" di browser.');
+        });
+
+        // ===== START =====
+        loadData();
+    </script>
+</body>
+</html>
